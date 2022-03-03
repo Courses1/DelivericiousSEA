@@ -1,11 +1,13 @@
+package domain;
+
 import java.util.Objects;
 
 public class MenuItem {
     private String name;
-    private Money price;
+    private Money  price;
 
     public MenuItem(String name, Money price) {
-        this.name = name;
+        this.name  = name;
         this.price = price;
     }
 
