@@ -9,3 +9,4 @@ build
 target/
 bin/
 **/.DS_Store
+out/
