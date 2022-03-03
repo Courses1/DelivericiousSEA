@@ -2,9 +2,11 @@ import java.util.Objects;
 
 public class MenuItem {
     private String name;
+    private Money price;
 
-    public MenuItem(String name) {
+    public MenuItem(String name, Money price) {
         this.name = name;
+        this.price = price;
     }
 
     @Override
@@ -12,9 +14,8 @@ public class MenuItem {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
         MenuItem otherMenuItem = (MenuItem) other;
-        System.out.println(otherMenuItem.name);
-        System.out.println(name);
-        return Objects.equals(name, otherMenuItem.name);
+        return Objects.equals(name, otherMenuItem.name) &&
+                Objects.equals(price, otherMenuItem.price);
     }
 
     @Override
@@ -26,6 +27,7 @@ public class MenuItem {
     public String toString() {
         return "MenuItem{" +
                 "name='" + name + '\'' +
+                ", price=" + price +
                 '}';
     }
 }
