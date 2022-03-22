@@ -24,7 +24,10 @@ public class BasketTest {
         basket.add(seaFoodBasketItem);
         basket.add(chocolateIceCreamBasketItem);
 
-        assertEquals(basket.basketItems(), List.of(tomatoBasketItem, seaFoodBasketItem, chocolateIceCreamBasketItem), "Menu Items are not equal");
+        basket.remove(chocolateIceCream, 1);
+
+        BasketItem expectedChocolateBasketItem = new BasketItem(chocolateIceCream, 2);
+        assertEquals(basket.basketItems(), List.of(tomatoBasketItem, seaFoodBasketItem, expectedChocolateBasketItem), "Menu Items are not equal");
     }
 
 }

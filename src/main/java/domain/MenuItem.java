@@ -1,12 +1,15 @@
 package domain;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class MenuItem {
-    private String name;
-    private Money  price;
+    private final UUID   id;
+    private       String name;
+    private       Money  price;
 
     public MenuItem(String name, Money price) {
+        this.id    = UUID.randomUUID();
         this.name  = name;
         this.price = price;
     }
@@ -16,8 +19,7 @@ public class MenuItem {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
         MenuItem otherMenuItem = (MenuItem) other;
-        return Objects.equals(name, otherMenuItem.name) &&
-                Objects.equals(price, otherMenuItem.price);
+        return Objects.equals(id, otherMenuItem.id);
     }
 
     @Override
@@ -28,6 +30,7 @@ public class MenuItem {
     @Override
     public String toString() {
         return "MenuItem{" +
+                "id='" + id + '\'' +
                 "name='" + name + '\'' +
                 ", price=" + price +
                 '}';
