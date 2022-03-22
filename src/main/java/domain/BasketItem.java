@@ -1,5 +1,6 @@
 package domain;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class BasketItem {
@@ -47,5 +48,9 @@ public class BasketItem {
                 "menuItem=" + menuItem +
                 ", quantity=" + quantity +
                 '}';
+    }
+
+    public Money price() {
+        return menuItem.getPrice().multiplyBy(new BigDecimal(this.quantity));
     }
 }

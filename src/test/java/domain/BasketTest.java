@@ -1,10 +1,8 @@
 package domain;
 
 import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BasketTest {
@@ -28,6 +26,8 @@ public class BasketTest {
 
         BasketItem expectedChocolateBasketItem = new BasketItem(chocolateIceCream, 2);
         assertEquals(basket.basketItems(), List.of(tomatoBasketItem, seaFoodBasketItem, expectedChocolateBasketItem), "Menu Items are not equal");
+
+        assertEquals(Money.SGD(new BigDecimal("30.00")), basket.totalPrice(), "basket total price is not correct!");
     }
 
 }

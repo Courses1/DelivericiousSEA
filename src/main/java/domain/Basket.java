@@ -1,7 +1,11 @@
 package domain;
 
+import java.math.BigDecimal;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import static domain.Currency.SGD;
 
 public class Basket {
     private List<BasketItem> basketItems = new ArrayList<>();
@@ -26,5 +30,11 @@ public class Basket {
 
     public List<BasketItem> basketItems() {
         return this.basketItems;
+    }
+
+    public Money totalPrice() {
+        return basketItems.stream()
+                .map(BasketItem::price)
+                .reduce(Money.zeroSGD(), Money::add);
     }
 }
