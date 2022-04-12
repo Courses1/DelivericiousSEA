@@ -53,4 +53,8 @@ public class BasketItem {
     public Money price() {
         return menuItem.getPrice().multiplyBy(new BigDecimal(this.quantity));
     }
+
+    public boolean belongsToCategory(MenuItemCategory menuItemCategory) {
+        return this.menuItem.belongsToCategory(menuItemCategory);
+    }
 }

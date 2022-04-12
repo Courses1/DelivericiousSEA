@@ -4,14 +4,16 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class MenuItem {
-    private final UUID   id;
-    private       String name;
-    private       Money  price;
+    private final UUID             id;
+    private       String           name;
+    private       Money            price;
+    private       MenuItemCategory menuItemCategory;
 
-    public MenuItem(String name, Money price) {
-        this.id    = UUID.randomUUID();
-        this.name  = name;
-        this.price = price;
+    public MenuItem(String name, Money price, MenuItemCategory menuItemCategory) {
+        this.menuItemCategory = menuItemCategory;
+        this.id               = UUID.randomUUID();
+        this.name             = name;
+        this.price            = price;
     }
 
     @Override
@@ -39,6 +41,11 @@ public class MenuItem {
                 "id='" + id + '\'' +
                 "name='" + name + '\'' +
                 ", price=" + price +
+                ", menuCategory=" + menuItemCategory +
                 '}';
+    }
+
+    public boolean belongsToCategory(MenuItemCategory menuItemCategory) {
+        return this.menuItemCategory == menuItemCategory;
     }
 }

@@ -2,16 +2,18 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 import repository.BasketRepository;
+import service.CouponSuggestionService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BasketTest {
-    private MenuItem tomatoSoup        = new MenuItem("Tomato Soup", Money.SGD(new BigDecimal("10.00")));
-    private MenuItem seaFoodSalad      = new MenuItem("Sea food salad", Money.SGD(new BigDecimal("12.00")));
-    private MenuItem chocolateIceCream = new MenuItem("Chocolate Ice Cream", Money.SGD(new BigDecimal("4.00")));
+    private MenuItem tomatoSoup        = new MenuItem("Tomato Soup", Money.SGD(new BigDecimal("10.00")), MenuItemCategory.SOUP);
+    private MenuItem seaFoodSalad      = new MenuItem("Sea food salad", Money.SGD(new BigDecimal("12.00")), MenuItemCategory.SEA_FOOD);
+    private MenuItem chocolateIceCream = new MenuItem("Chocolate Ice Cream", Money.SGD(new BigDecimal("4.00")), MenuItemCategory.DESSERT_ICE_CREAM);
 
     @Test
     void shouldAddMenuToBasket() throws BasketQuantityExceedException {
@@ -61,5 +63,20 @@ public class BasketTest {
         assertEquals(basket.id(), savedBasket.id(), "saved Basket id should be equal");
         assertEquals(basket.basketItems(), savedBasket.basketItems(), "saved Basket item should be equal");
 
+    }
+
+    @Test
+    void shouldBeAbleToSuggestApplicableCoupons() throws BasketQuantityExceedException {
+        Basket     basket           = new Basket();
+        BasketItem tomatoBasketItem = new BasketItem(tomatoSoup, 10);
+        basket.add(tomatoBasketItem);
+
+        CouponSuggestionService service   = new CouponSuggestionService();
+        Coupon                  couponOne = new Coupon("DELIVERICIOUS_10", BigDecimal.TEN);
+        Coupon                  couponTwo = new Coupon("DELIVERICIOUS_05", new BigDecimal("5.00"));
+
+        Optional<Coupon> suggestedCoupon = service.suggestCoupon(basket, List.of(couponOne, couponTwo));
+
+        assertEquals("DELIVERICIOUS_10", suggestedCoupon.get().getCode());
     }
 }
