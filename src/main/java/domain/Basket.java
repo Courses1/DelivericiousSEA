@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static domain.BasketStatus.CHECKED_OUT;
+import static domain.BasketStatus.NEW;
+
 public class Basket {
     private List<BasketItem> basketItems = new ArrayList<>();
     private UUID             id;
+    private BasketStatus     status;
 
     private static final int BASKET_QUANTITY_LIMIT = 100;
 
+
     public Basket() {
-        this.id = UUID.randomUUID();
+        this.id     = UUID.randomUUID();
+        this.status = NEW;
     }
 
     public void add(BasketItem basketItem) throws BasketQuantityExceedException {
@@ -63,5 +69,13 @@ public class Basket {
         Basket clone = new Basket();
         clone.basketItems.addAll(this.basketItems);
         return clone;
+    }
+
+    public void markAsCheckedOut() {
+        this.status = CHECKED_OUT;
+    }
+
+    public Boolean isCheckedOut() {
+        return this.status == CHECKED_OUT;
     }
 }

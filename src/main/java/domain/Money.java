@@ -41,4 +41,12 @@ public class Money {
         return Objects.equals(amount, otherMoney.amount) &&
                 Objects.equals(currency, otherMoney.currency);
     }
+
+    @Override
+    public String toString() {
+        return "Money{" +
+                "amount=" + amount +
+                ", currency=" + currency +
+                '}';
+    }
 }

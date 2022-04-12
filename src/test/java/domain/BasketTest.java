@@ -1,8 +1,12 @@
 package domain;
 
+import infra.PaymentService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import repository.BasketRepository;
+import service.CheckoutService;
 import service.CouponSuggestionService;
+import service.PaymentFailedException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -78,5 +82,24 @@ public class BasketTest {
         Optional<Coupon> suggestedCoupon = service.suggestCoupon(basket, List.of(couponOne, couponTwo));
 
         assertEquals("DELIVERICIOUS_10", suggestedCoupon.get().getCode());
+    }
+
+    @Test
+    void shouldBeAbleToCheckoutTheBasketAfterSuccessfulPayment() throws BasketQuantityExceedException, PaymentFailedException {
+        Basket     basket           = new Basket();
+        BasketItem tomatoBasketItem = new BasketItem(tomatoSoup, 3);
+        basket.add(tomatoBasketItem);
+
+        PaymentService paymentService = Mockito.mock(PaymentService.class);
+        Mockito.when(paymentService.pay(Money.SGD(new BigDecimal("30.00")))).thenReturn(true);
+
+        assertFalse(basket.isCheckedOut());
+
+        CheckoutService checkoutService = new CheckoutService(paymentService);
+        OrderRequest    orderRequest    = checkoutService.checkout(basket);
+
+        assertTrue(basket.isCheckedOut());
+        assertEquals(basket, orderRequest.basket(), "Order should have completed basket");
+        assertEquals(OrderStatus.NEW, orderRequest.orderStatus(), "Order should have completed basket");
     }
 }
