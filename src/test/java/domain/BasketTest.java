@@ -1,8 +1,14 @@
 package domain;
 
+import infra.Event;
+import infra.EventPublisher;
 import infra.PaymentService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import repository.BasketRepository;
 import service.CheckoutService;
 import service.CouponSuggestionService;
@@ -13,11 +19,17 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 
+
+@ExtendWith(MockitoExtension.class)
 public class BasketTest {
     private MenuItem tomatoSoup        = new MenuItem("Tomato Soup", Money.SGD(new BigDecimal("10.00")), MenuItemCategory.SOUP);
     private MenuItem seaFoodSalad      = new MenuItem("Sea food salad", Money.SGD(new BigDecimal("12.00")), MenuItemCategory.SEA_FOOD);
     private MenuItem chocolateIceCream = new MenuItem("Chocolate Ice Cream", Money.SGD(new BigDecimal("4.00")), MenuItemCategory.DESSERT_ICE_CREAM);
+
+    @Captor
+    ArgumentCaptor<Event> eventArgumentCaptor;
 
     @Test
     void shouldAddMenuToBasket() throws BasketQuantityExceedException {
@@ -91,15 +103,16 @@ public class BasketTest {
         basket.add(tomatoBasketItem);
 
         PaymentService paymentService = Mockito.mock(PaymentService.class);
+        EventPublisher eventPublisher = Mockito.mock(EventPublisher.class);
         Mockito.when(paymentService.pay(Money.SGD(new BigDecimal("30.00")))).thenReturn(true);
 
         assertFalse(basket.isCheckedOut());
 
-        CheckoutService checkoutService = new CheckoutService(paymentService);
-        OrderRequest    orderRequest    = checkoutService.checkout(basket);
+        CheckoutService checkoutService = new CheckoutService(eventPublisher, paymentService);
+        checkoutService.checkout(basket);
 
         assertTrue(basket.isCheckedOut());
-        assertEquals(basket, orderRequest.basket(), "Order should have completed basket");
-        assertEquals(OrderStatus.NEW, orderRequest.orderStatus(), "Order should have completed basket");
+        verify(eventPublisher).publish(eventArgumentCaptor.capture());
+        assertEquals("Received basket with Id " + basket.id().toString(), eventArgumentCaptor.getValue().toMessage());
     }
 }

@@ -1,21 +1,24 @@
 package service;
 
 import domain.Basket;
-import domain.OrderRequest;
+import infra.BasketCheckedOutEvent;
+import infra.EventPublisher;
 import infra.PaymentService;
 
 public class CheckoutService {
-  private final PaymentService paymentService;
+    private final PaymentService paymentService;
+    private       EventPublisher eventPublisher;
 
-  public CheckoutService(PaymentService paymentService) {
-    this.paymentService = paymentService;
-  }
-
-  public OrderRequest checkout(Basket basket) throws PaymentFailedException {
-    if (paymentService.pay(basket.totalPrice())) {
-      basket.markAsCheckedOut();
-      return new OrderRequest(basket);
+    public CheckoutService(EventPublisher eventPublisher, PaymentService paymentService) {
+        this.eventPublisher = eventPublisher;
+        this.paymentService = paymentService;
     }
-    throw new PaymentFailedException();
-  }
+
+    public void checkout(Basket basket) throws PaymentFailedException {
+        if (paymentService.pay(basket.totalPrice())) {
+            basket.markAsCheckedOut();
+            eventPublisher.publish(new BasketCheckedOutEvent(basket));
+        } else
+            throw new PaymentFailedException();
+    }
 }
