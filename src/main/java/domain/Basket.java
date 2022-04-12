@@ -1,17 +1,23 @@
 package domain;
 
-import java.math.BigDecimal;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import static domain.Currency.SGD;
+import java.util.UUID;
 
 public class Basket {
     private List<BasketItem> basketItems = new ArrayList<>();
+    private UUID             id;
+
+    public Basket() {
+        this.id = UUID.randomUUID();
+    }
 
     public void add(BasketItem basketItem) {
         basketItems.add(basketItem);
+    }
+
+    public UUID id() {
+        return this.id;
     }
 
     public void remove(MenuItem menuItemToRemove, int quantity) {
@@ -36,5 +42,11 @@ public class Basket {
         return basketItems.stream()
                 .map(BasketItem::price)
                 .reduce(Money.zeroSGD(), Money::add);
+    }
+
+    public Basket repeat() {
+        Basket clone = new Basket();
+        clone.basketItems.addAll(this.basketItems);
+        return clone;
     }
 }

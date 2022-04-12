@@ -1,9 +1,12 @@
 package domain;
 
 import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class BasketTest {
 
@@ -28,6 +31,11 @@ public class BasketTest {
         assertEquals(basket.basketItems(), List.of(tomatoBasketItem, seaFoodBasketItem, expectedChocolateBasketItem), "Menu Items are not equal");
 
         assertEquals(Money.SGD(new BigDecimal("30.00")), basket.totalPrice(), "basket total price is not correct!");
+
+        Basket repeatBasket = basket.repeat();
+        assertEquals(repeatBasket.basketItems(), basket.basketItems(), "Basket items should be equal");
+        assertNotEquals(repeatBasket.id(), basket.id(), "Basket Id should not be equal");
+        assertNotEquals(repeatBasket, basket, "Basket Id should not be equal");
     }
 
 }
