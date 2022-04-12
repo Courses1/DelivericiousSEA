@@ -5,17 +5,15 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BasketTest {
+    private MenuItem tomatoSoup        = new MenuItem("Tomato Soup", Money.SGD(new BigDecimal("10.00")));
+    private MenuItem seaFoodSalad      = new MenuItem("Sea food salad", Money.SGD(new BigDecimal("12.00")));
+    private MenuItem chocolateIceCream = new MenuItem("Chocolate Ice Cream", Money.SGD(new BigDecimal("4.00")));
 
     @Test
-    void shouldAddMenuToBasket() {
-        MenuItem tomatoSoup        = new MenuItem("Tomato Soup", Money.SGD(new BigDecimal("10.00")));
-        MenuItem seaFoodSalad      = new MenuItem("Sea food salad", Money.SGD(new BigDecimal("12.00")));
-        MenuItem chocolateIceCream = new MenuItem("Chocolate Ice Cream", Money.SGD(new BigDecimal("4.00")));
-
+    void shouldAddMenuToBasket() throws BasketQuantityExceedException {
         BasketItem tomatoBasketItem            = new BasketItem(tomatoSoup);
         BasketItem seaFoodBasketItem           = new BasketItem(seaFoodSalad);
         BasketItem chocolateIceCreamBasketItem = new BasketItem(chocolateIceCream, 3);
@@ -38,4 +36,13 @@ public class BasketTest {
         assertNotEquals(repeatBasket, basket, "Basket Id should not be equal");
     }
 
+
+    @Test
+    void shouldThrowExceptionIfQuantityInCartExceeds() {
+        Basket basket = new Basket();
+
+        BasketItem tomatoBasketItem = new BasketItem(tomatoSoup, 110);
+
+        assertThrows(BasketQuantityExceedException.class, () -> basket.add(tomatoBasketItem));
+    }
 }
