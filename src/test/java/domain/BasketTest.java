@@ -1,6 +1,7 @@
 package domain;
 
 import org.junit.jupiter.api.Test;
+import repository.BasketRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -44,5 +45,21 @@ public class BasketTest {
         BasketItem tomatoBasketItem = new BasketItem(tomatoSoup, 110);
 
         assertThrows(BasketQuantityExceedException.class, () -> basket.add(tomatoBasketItem));
+    }
+
+    @Test
+    void shouldBeAbleToSaveBasket() throws BasketQuantityExceedException {
+        Basket     basket           = new Basket();
+        BasketItem tomatoBasketItem = new BasketItem(tomatoSoup, 10);
+        basket.add(tomatoBasketItem);
+
+        BasketRepository basketRepository = new BasketRepository();
+        basketRepository.save(basket);
+        Basket savedBasket = basketRepository.getById(basket.id());
+
+        assertEquals(basket, savedBasket, "Basket items should be equal");
+        assertEquals(basket.id(), savedBasket.id(), "saved Basket id should be equal");
+        assertEquals(basket.basketItems(), savedBasket.basketItems(), "saved Basket item should be equal");
+
     }
 }
